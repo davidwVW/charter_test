@@ -6,6 +6,148 @@ include: "*.view"
 # include all the dashboards
 include: "*.dashboard"
 
+view: Segment_Daypart_Imp_LA_NYC {
+  derived_table: {
+    sql:
+      SELECT
+        ImpCount.*,
+        mpv.[campaignname],
+        cfv.[description] AS [SegmentName],
+        daypartGrp.[Description] AS [Daypart],
+        daypart.[Description] AS [HourName],
+        daypart.id AS [HourOrder],
+        'LA' as Market
+      FROM [VwHHCharterLARpt].[dbo].[ImprCountBySegmentDaypart] AS ImpCount
+      LEFT JOIN [VwDb].[dbo].[VideoCrmMediaPackageView] AS mpv
+        ON
+        ImpCount.Adid = mpv.adid
+      LEFT JOIN [VwDb].[dbo].[VideoCrmCampaignFlagView] AS cfv
+        ON
+        ImpCount.SegmentFlag = cfv.flag AND
+        mpv.mediapackid = cfv.mediapackid
+      LEFT JOIN [VwHHCharterLARpt].[dbo].[DayPart] daypart
+        ON
+        ImpCount.DaypartId = daypart.Id
+      LEFT JOIN [VwHHCharterLARpt].[dbo].[DayPartGroup] daypartGrp
+        ON
+        daypart.DaypartGroupId = daypartGrp.Id
+
+      UNION
+
+      SELECT
+        ImpCount.*,
+        mpv.[campaignname],
+        cfv.[description] AS [SegmentName],
+        daypartGrp.[Description] AS [Daypart],
+        daypart.[Description] AS [HourName],
+        daypart.id AS [HourOrder],
+        'NYC' as Market
+      FROM [VwHHCharterNYRpt].[dbo].[ImprCountBySegmentDaypart] AS ImpCount
+      LEFT JOIN [VwDb].[dbo].[VideoCrmMediaPackageView] AS mpv
+        ON
+        ImpCount.Adid = mpv.adid
+      LEFT JOIN [VwDb].[dbo].[VideoCrmCampaignFlagView] AS cfv
+        ON
+        ImpCount.SegmentFlag = cfv.flag AND
+        mpv.mediapackid = cfv.mediapackid
+      LEFT JOIN [VwHHCharterNYRpt].[dbo].[DayPart] daypart
+        ON
+        ImpCount.DaypartId = daypart.Id
+      LEFT JOIN [VwHHCharterNYRpt].[dbo].[DayPartGroup] daypartGrp
+        ON
+        daypart.DaypartGroupId = daypartGrp.Id;;
+  }
+  dimension: InsertionDate {
+    type: date
+    sql: ${TABLE}.InsertionDate ;;
+  }
+  dimension: adid {
+    type: number
+    sql: ${TABLE}. ;;
+  }
+  dimension: SegmentFlag {
+    type: string
+    sql: ${TABLE}.SegmentFlag ;;
+  }
+  dimension: DaypartId {
+    type: number
+    sql: ${TABLE}.DaypartId ;;
+  }
+  measure: LiveImpressionCount {
+    type: sum
+    sql: ${TABLE}.LiveImpressionCount ;;
+  }
+  measure: LiveDedupedImpressionCount {
+    type: sum
+    sql: ${TABLE}.LiveDedupedImpressionCount ;;
+  }
+  measure: LivePSDImpressionCount {
+    type: sum
+    sql: ${TABLE}.LivePSDImpressionCount ;;
+  }
+  measure: LivePSDDedupedImpressionCount {
+    type: sum
+    sql: ${TABLE}.LivePSDDedupedImpressionCount ;;
+  }
+  measure: LiveP1ImpressionCount {
+    type: sum
+    sql: ${TABLE}.LiveP1ImpressionCount ;;
+  }
+  measure: LiveP1DedupedImpressionCount {
+    type: sum
+    sql: ${TABLE}.LiveP1DedupedImpressionCount ;;
+  }
+  measure: LiveP3ImpressionCount {
+    type: sum
+    sql: ${TABLE}.LiveP3ImpressionCount ;;
+  }
+  measure: LiveP3DedupedImpressionCount {
+    type: sum
+    sql: ${TABLE}.LiveP3DedupedImpressionCount ;;
+  }
+  measure: LiveP7ImpressionCount {
+    type: sum
+    sql: ${TABLE}.LiveP7ImpressionCount ;;
+  }
+  measure: LiveP7DedupedImpressionCount {
+    type: sum
+    sql: ${TABLE}.LiveP7DedupedImpressionCount ;;
+  }
+  measure: LiveP7PImpressionCount {
+    type: sum
+    sql: ${TABLE}.LiveP7PImpressionCount ;;
+  }
+  measure: LiveP7PDedupedImpressionCount {
+    type: sum
+    sql: ${TABLE}.LiveP7PDedupedImpressionCount ;;
+  }
+  dimension: CampaignName {
+    type: string
+    sql: ${TABLE}.CampaignName ;;
+  }
+  dimension: SegmentName {
+    type: string
+    sql: ${TABLE}.SegmentName ;;
+  }
+  dimension: Daypart {
+    type: string
+    sql: ${TABLE}.daypart ;;
+  }
+  dimension: HourName {
+    type: string
+    sql: ${TABLE}.HourName ;;
+  }
+  dimension: HourOrder {
+    type: number
+    sql: ${TABLE}.HourOrder ;;
+  }
+  dimension: market {
+    type: string
+    sql: ${TABLE}.market ;;
+  }
+}
+
+explore: Segment_Daypart_Imp_LA_NYC {}
 
 explore: impr_count_by_segment_daypart {
   join: video_crm_media_package_view {
