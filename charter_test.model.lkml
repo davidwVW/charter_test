@@ -61,6 +61,7 @@ view: Segment_Daypart_Imp_LA_NYC {
     type: date
     sql: ${TABLE}.InsertionDate ;;
   }
+
   dimension: adid {
     type: number
     sql: ${TABLE}. ;;
@@ -145,9 +146,27 @@ view: Segment_Daypart_Imp_LA_NYC {
     type: string
     sql: ${TABLE}.market ;;
   }
+  dimension: campaignGroup {
+    type: string
+    case: {
+      when: {
+        sql: ${TABLE}.campaignname LIKE '%LA SR EFT%';;
+        label: "EFT"
+      }
+      when: {
+        sql: ${TABLE}.campaignname LIKE '%SR Marketing Control Campaign%';;
+        label: "Marketing Control Campaign"
+      }
+      else: "Unknown"
+    }
+  }
+
+
 }
 
-explore: Segment_Daypart_Imp_LA_NYC {}
+explore: Segment_Daypart_Imp_LA_NYC {
+
+}
 
 explore: impr_count_by_segment_daypart {
   join: video_crm_media_package_view {
