@@ -57,6 +57,14 @@ view: Segment_Daypart_Imp_LA_NYC {
         ON
         daypart.DaypartGroupId = daypartGrp.Id;;
   }
+  dimension: picture {
+    hidden: yes
+    sql: COALESCE(('https://images-na.ssl-images-amazon.com/images/I/91iOpVeGC7L._SL1520_.jpg'),CAST(${TABLE}.Adid AS varchar(10)));;
+  }
+  dimension: picture_example {
+    sql: ${picture};;
+    html: <img src="{{ value }}" width="100" height="100"/> ;;
+  }
   dimension: InsertionDate {
     type: date
     sql: ${TABLE}.InsertionDate ;;
@@ -77,6 +85,16 @@ view: Segment_Daypart_Imp_LA_NYC {
   measure: LiveImpressionCount {
     type: sum
     sql: ${TABLE}.LiveImpressionCount ;;
+    #html: {{ rendered_value }} || {{Segment_Daypart_Imp_LA_NYC.LiveImpCountPlus1000._rendered_value}} of total;;
+  }
+  measure: LiveImpressionCount_example {
+    type: sum
+    sql: ${TABLE}.LiveImpressionCount ;;
+    html: {{ rendered_value }} || {{Segment_Daypart_Imp_LA_NYC.LiveImpCountPlus1000._rendered_value}} of total;;
+  }
+  measure: LiveImpCountPlus1000 {
+    type: sum
+    sql:  ${TABLE}.LiveImpressionCount + 1000;;
   }
   measure: LiveDedupedImpressionCount {
     type: sum
